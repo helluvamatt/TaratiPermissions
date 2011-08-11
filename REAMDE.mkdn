@@ -1,0 +1,20 @@
+### TaratiPermissions
+#### Tarati Permissions Manager Plugin for Bukkit
+
+This plugin was custom written for the Tarati RP Server to bridge [Tarati Official Forums](http://tarati.schneenet.com) with Bukkit Minecraft Server Permissions.
+
+On Tarati Minecraft, we use PermissionsEx to handle server permissions for the various commands and plugins. This plugin assigns permission groups for PermissionsEx based on forum rank. Since there are already excellent plugins which provide this functionality, I will attempt to explain why I feel the need to write a custom plugin.
+
+###### Rationale
+
+We use an excellent forum software package called Simple Machines Forums. We use the latest version (2.0 - Released June 16, 2011). The database backend keeps custom fields stored in such a way that fecthing a field for a particular user requires more than just a simple SELECT statement. This plugin is custom written to interface with this particular setup. It will be configurable, but initial versions will be hard coded for testing.
+
+###### The Query
+
+The SQL query that gets the user's group ID from a particular Minecraft IGN:
+
+	SELECT  `smf_members`.`id_member` ,  `member_name` ,  `id_group` ,  `smf_themes`.`value`
+	FROM  `smf_members`
+	INNER JOIN  `smf_themes` ON  `smf_themes`.`id_member` =  `smf_members`.`id_member`
+	AND  `smf_themes`.`variable` =  'cust_ign'
+	WHERE  `smf_themes`.`value` =  '<IGN>'
