@@ -1,5 +1,8 @@
 package com.schneenet.tarati;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -9,12 +12,17 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 public class TaratiPermissionsPlugin extends JavaPlugin {
 	
 	private PermissionManager permissionManager;
+	private HashMap<Integer,String> groupMapping = new HashMap<Integer,String>();
+	
 	private String pluginName;
 	private String pluginVersion;
 	
 	@Override
 	public void onDisable() {
-		
+		TaratiPermissionsLogger.info("Disabling " + pluginName + " v" + pluginVersion);
+		// TODO UnRegister playerListener?
+		// TODO Close database connections?
+		TaratiPermissionsLogger.info("Disabled " + pluginName + " v" + pluginVersion);
 	}
 
 	@Override
@@ -34,6 +42,22 @@ public class TaratiPermissionsPlugin extends JavaPlugin {
 			TaratiPermissionsLogger.warn("PermissionsEx plugin was not found or enabled.");
 		}
 		
+		// TODO Test database connection (persistent connection?)
+		// TODO Load groupMapping from configuration
+		// TODO Register playerListener
+		
+		TaratiPermissionsLogger.info("Enabled " + pluginName + " v" + pluginVersion);
+		
 	}
+	
+	public PermissionManager getPermissionManager() {
+		return this.permissionManager;
+	}
+	
+	public Map<Integer,String> getGroupMapping() {
+		return this.groupMapping;
+	}
+	
+	
 
 }
