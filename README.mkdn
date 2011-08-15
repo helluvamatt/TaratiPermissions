@@ -18,3 +18,45 @@ The SQL query that gets the user's group ID from a particular Minecraft IGN:
 	INNER JOIN  `smf_themes` ON  `smf_themes`.`id_member` =  `smf_members`.`id_member`
 	AND  `smf_themes`.`variable` =  'cust_ign'
 	WHERE  `smf_themes`.`value` =  '<IGN>'
+	
+###### Example Config
+
+	bridge:
+	    database:
+	        uri: 'jdbc:mysql://localhost:3306/minecraft'
+	        user: 'dbuser'
+	        password: 'dbpassword'
+	        # Forum users table
+	        userTable: 'forum_users'
+	        # User id col
+	        userIdCol: 'user_id'
+	        # Username col (NOT IGN)
+	        userNameCol: 'username'
+	        # In-Game Name column
+	        ignCol: 'custom_ign'
+	        # Group ID column
+	        groupIdCol: 'group_id'
+	        # Custom lookup query*
+	        customlookupquery: ''
+	    # Groups - define group information here
+	    groups:
+			# Group name
+		    Admins:
+				# Forum group id
+		        gid: 0
+		        # If whitelist.enable is true, is this group whitelisted?
+		        whitelist: true
+		    Moderators:
+		        gid: 1
+		        whitelist: true
+		    Members:
+		        gid: 2
+		        whitelist: true
+	    whitelist:
+		    # Use the white list (kick users whose groups have whitelist: false or users that are not registered)
+	        enable: true
+	    kickmessage:
+			# Message to give to users who are kicked because they are not registered on the forum
+	        notregistered: 'Please register on our forum to play on our server!'
+	        # Message to give to users who are kicked because their group is not white listed.
+	        groupnotallowed: 'You are not allowed on our server at this time!'
