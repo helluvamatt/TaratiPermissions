@@ -3,6 +3,9 @@ package com.schneenet.tarati;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.plugin.Plugin;
@@ -15,6 +18,7 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import com.schneenet.tarati.database.DatabaseException;
 import com.schneenet.tarati.database.DatabaseHandler;
+import com.schneenet.tarati.database.ForumUser;
 import com.schneenet.tarati.database.TaratiMySQLHandler;
 
 public class TaratiPermissionsPlugin extends JavaPlugin {
@@ -22,6 +26,7 @@ public class TaratiPermissionsPlugin extends JavaPlugin {
 	private PermissionManager permissionManager;
 	private HashMap<Integer, TaratiPermissionGroup> groupMapping = new HashMap<Integer, TaratiPermissionGroup>();
 	private DatabaseHandler databaseHandler;
+	private TaratiPermissionsCommandHandler commandHandler;
 	
 	private String notRegisteredKickMessage;
 	private String groupNotAllowedKickMessage;
@@ -115,11 +120,50 @@ public class TaratiPermissionsPlugin extends JavaPlugin {
 		
 		// TODO Other configuration options
 		
+		// Register commandHandler
+		this.commandHandler = new TaratiPermissionsCommandHandler(this);
+		
 		// Register playerListener
 		this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, new TaratiPermissionsPlayerListener(this), Priority.Lowest, this);
 		
 		TaratiPermissionsLogger.info("Enabled " + pluginName + " v" + pluginVersion);
 		
+	}
+	
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		return this.commandHandler.onCommand(sender, command, label, args);
+	}
+	
+	public void processPlayer(Player p) {
+		try {
+			// Perform that actual database lookup ASAP
+			ForumUser forumUser = this.databaseHandler.lookupForumUser(p.getName());
+			if (forumUser != null) {
+				// The user was registered on the forum!
+				if (groupMapping.containsKey(forumUser.getGroupId())) {
+					// The user is in a forum group that is specified in the configuration
+					// Get that group:
+					TaratiPermissionGroup tGroup = groupMapping.get(forumUser.getGroupId());
+					// Tell PEX they should be in that group:
+					String[] newGroups = {tGroup.getPexName()};
+					permissionManager.getUser(p).setGroups(newGroups);
+					// If we are using a white list, and the group is not white listed, kick them
+					if (this.useWhitelist && !tGroup.isWhitelisted()) {
+						p.kickPlayer(this.groupNotAllowedKickMessage);
+					}
+				} else if (this.useWhitelist) {
+					// The user is in a forum group that is not specified in the configuration
+					// If we are using a white list, kick them
+					p.kickPlayer(this.groupNotAllowedKickMessage);
+				}
+			} else if (this.useWhitelist) {
+				// The user is not registered, if we are using a white list, kick them.
+				p.kickPlayer(this.notRegisteredKickMessage);
+			}
+		} catch (DatabaseException e1) {
+			// Should the database error out, they will be set to the default group by PEX. (Hopefully, that group has no permissions)
+			TaratiPermissionsLogger.severe(e1.getMessage(), e1);
+		}
 	}
 	
 	public PermissionManager getPermissionManager() {
