@@ -22,9 +22,7 @@ public class TaratiMySQLHandler implements DatabaseHandler {
 	private MysqlConnectionPoolDataSource mysqlDataSource;
 
 	@Override
-	public void initialize(String uri, String user, String password,
-			String userTable, String userIdCol, String userNameCol,
-			String ignCol, String groupIdCol) throws DatabaseException {
+	public void initialize(String uri, String user, String password, String userTable, String userIdCol, String userNameCol, String ignCol, String groupIdCol) throws DatabaseException {
 		dbUri = uri;
 		dbUser = user;
 		dbPass = password;
@@ -44,8 +42,7 @@ public class TaratiMySQLHandler implements DatabaseHandler {
 		this.lookupQueryIgnCol = ignCol;
 		this.lookupQueryUserNameCol = userNameCol;
 		this.lookupQueryUserIdCol = userIdCol;
-		String query = "SELECT `&userIdCol`,`&userNameCol`,`&groupIdCol`,`&ignCol` FROM `"
-				+ userTable + "` WHERE `&ignCol` = '&ignValue'";
+		String query = "SELECT `&userIdCol`,`&userNameCol`,`&groupIdCol`,`&ignCol` FROM `" + userTable + "` WHERE `&ignCol` = '&ignValue'";
 		this.setLookupQuery(query);
 
 	}
@@ -53,13 +50,7 @@ public class TaratiMySQLHandler implements DatabaseHandler {
 	@Override
 	public void setLookupQuery(String query) {
 		// Process macros here
-		this.lookupQuery = query
-				.replace("&groupIdCol", this.lookupQueryGroupIdCol)
-				.replace("&ignCol", this.lookupQueryIgnCol)
-				.replace("&userIdCol", this.lookupQueryUserIdCol)
-				.replace("&userNameCol", this.lookupQueryUserNameCol)
-				.replace("&ignValue", "?");
-
+		this.lookupQuery = query.replace("&groupIdCol", this.lookupQueryGroupIdCol).replace("&ignCol", this.lookupQueryIgnCol).replace("&userIdCol", this.lookupQueryUserIdCol).replace("&userNameCol", this.lookupQueryUserNameCol).replace("&ignValue", "?");
 	}
 
 	@Override
@@ -68,15 +59,11 @@ public class TaratiMySQLHandler implements DatabaseHandler {
 			Connection conn = null;
 			try {
 				conn = this.mysqlDataSource.getConnection();
-				PreparedStatement stmt = conn
-						.prepareStatement(this.lookupQuery);
+				PreparedStatement stmt = conn.prepareStatement(this.lookupQuery);
 				stmt.setString(1, ign);
 				ResultSet rs = stmt.executeQuery();
 				if (rs.next()) {
-					return new ForumUser(rs.getInt(this.lookupQueryUserIdCol),
-							rs.getInt(this.lookupQueryGroupIdCol),
-							rs.getString(this.lookupQueryUserNameCol),
-							rs.getString(this.lookupQueryIgnCol));
+					return new ForumUser(rs.getInt(this.lookupQueryUserIdCol), rs.getInt(this.lookupQueryGroupIdCol), rs.getString(this.lookupQueryUserNameCol), rs.getString(this.lookupQueryIgnCol));
 				} else {
 					return null;
 				}

@@ -1,7 +1,7 @@
 package com.schneenet.tarati.database;
 
 public class DatabaseException extends Throwable {
-	
+
 	/**
 	 * Because Eclipse wanted it
 	 */
@@ -10,9 +10,9 @@ public class DatabaseException extends Throwable {
 	public DatabaseException(Throwable cause) {
 		super(cause);
 	}
-	
+
 	public DatabaseException(String msg) {
 		super(msg);
 	}
-	
+
 }
