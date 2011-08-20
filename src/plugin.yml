@@ -1,3 +1,11 @@
 name: TaratiPermissions
 main: com.schneenet.tarati.TaratiPermissionsPlugin
 version: 1.0
+commands:
+    taratiperms:
+        description: Manage Tarati bridge permissions
+        permission: taratipermissions.taratiperms
+        usage: |
+            /taratiperms reload
+            /taratiperms reload <user>
+            /taratiperms reload all

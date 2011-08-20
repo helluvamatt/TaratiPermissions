@@ -105,7 +105,7 @@ public class TaratiPermissionsPlugin extends JavaPlugin {
 
 		// Register playerListener
 		this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, new TaratiPermissionsPlayerListener(this), Priority.Lowest, this);
-
+		
 		TaratiPermissionsLogger.info("Enabled " + pluginName + " v" + pluginVersion);
 
 	}

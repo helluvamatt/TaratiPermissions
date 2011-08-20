@@ -21,7 +21,7 @@ public class TaratiPermissionsCommandHandler implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if (COMMAND_TARATIPERMS.equals(command.getName())) {
+		if (COMMAND_TARATIPERMS.equals(label)) {
 			if (sender instanceof Player) {
 				Player p = (Player) sender;
 				if (this.plugin.getPermissionManager().has(p, COMMAND_TARATIPERMS, p.getWorld().getName())) {
